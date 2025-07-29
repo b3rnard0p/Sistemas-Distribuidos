@@ -6,7 +6,7 @@
   Um processo é a instância de um programa em execução, incluindo seu ambiente de execução: código, dados atuais, registradores, contador de programa, privilégios e limites de recursos.
 
 - **Contexto de hardware e software**  
-  O contexto de hardware guarda os registradores da CPU; o contexto de software inclui PID, UID, quotas e privilégios.
+  O contexto de hardware representa o estado da CPU,  guarda ponteiros, flags e o program counter (PC) — que aponta para a próxima instrução a ser executada. O contexto de software inclui PID, estado e privilégios.
 
 - **Estados de um processo**  
   - Execução (running)  
