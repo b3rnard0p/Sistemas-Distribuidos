@@ -3,7 +3,7 @@
 ## 1. O que é um processo e como funciona?
 
 - **Definição**  
-  Um processo é a instância de um programa em execução, incluindo seu ambiente de execução: código, dados atuais, registradores, contador de programa, privilégios e limites de recursos :contentReference[oaicite:0]{index=0}.
+  Um processo é a instância de um programa em execução, incluindo seu ambiente de execução: código, dados atuais, registradores, contador de programa, privilégios e limites de recursos.
 
 - **Contexto de hardware e software**  
   O contexto de hardware guarda os registradores da CPU; o contexto de software inclui PID, UID, quotas e privilégios.
