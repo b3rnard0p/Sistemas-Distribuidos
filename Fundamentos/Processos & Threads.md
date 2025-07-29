@@ -2,32 +2,50 @@
 
 ## 1. O que é um processo e como funciona?
 
-- **Definição:**
-  - Um processo é a instância de um programa em execução, contendo seu próprio espaço de memória e recursos do sistema.
-- **Funcionamento:**
-  1. **Criação:** O sistema operacional cria uma estrutura de dados (PCB – Process Control Block) para gerenciar o processo.
-  2. **Escalonamento:** O escalonador do SO decide quando e por quanto tempo o processo será executado na CPU.
-  3. **Execução:** O processo opera em seu espaço de endereço isolado, acessando memória, arquivos e recursos.
-  4. **Comunicação e Sincronização:** Se necessário, usa Comunicação Inter-Processos (IPC) – pipes, sockets, memória compartilhada, etc.
-  5. **Término:** Ao concluir, o processo libera recursos e informa ao SO seu estado final.
+- **Definição**  
+  Um processo é a instância de um programa em execução, incluindo seu ambiente de execução: código, dados atuais, registradores, contador de programa, privilégios e limites de recursos :contentReference[oaicite:0]{index=0}.
+
+- **Contexto de hardware e software**  
+  O contexto de hardware guarda os registradores da CPU; o contexto de software inclui PID, UID, quotas e privilégios :contentReference[oaicite:1]{index=1}.
+
+- **Estados de um processo**  
+  - Execução (running)  
+  - Pronto (ready)  
+  - Espera / bloqueado (waiting) :contentReference[oaicite:2]{index=2}
+
+- **Escalonamento e troca de contexto**  
+  O sistema operacional realiza multitarefa e preempção, alternando processos conforme prioridades, aging e interrupções de I/O. Cada troca de contexto armazena o estado em PCB (Process Control Block) :contentReference[oaicite:3]{index=3}.
+
+- **Tipos de processos**  
+  - CPU-bound: consome intensamente a CPU  
+  - I/O-bound: espera por operações de entrada/saída :contentReference[oaicite:4]{index=4}
 
 ## 2. O que é uma thread e como funciona?
 
-- **Definição:**
-  - Uma thread (ou linha de execução) é a menor unidade de execução dentro de um processo.
-- **Funcionamento:**
-  1. **Criação:** Inicia-se dentro de um processo existente, compartilhando espaço de memória e recursos.
-  2. **Escalonamento:** O SO escalona threads de diferentes processos ou do mesmo processo, usando PCB de threads.
-  3. **Execução:** Threads do mesmo processo podem executar concorrentemente, acessando as mesmas variáveis e memória.
-  4. **Sincronização:** Para evitar condições de corrida, usam mecanismos como mutex, semáforos e monitores.
-  5. **Término:** Cada thread pode terminar independentemente; o processo só termina quando todas as threads finalizam.
+- **Definição**  
+  Uma thread é a menor unidade de execução dentro de um processo; representa uma sequência de instruções que compartilha o espaço de memória do processo :contentReference[oaicite:5]{index=5}.
+
+- **Funcionamento e criação**  
+  Threads são criadas dentro de processos e herdam recursos como memória e arquivos abertos. Executam tarefas concorrentemente :contentReference[oaicite:6]{index=6}.
+
+- **Multithreading e SMT**  
+  CPUs modernas podem executar múltiplas threads simultaneamente via SMT (Simultaneous Multithreading): núcleos físicos funcionam como múltiplos núcleos virtuais :contentReference[oaicite:7]{index=7}.
+
+- **Vantagens das threads**  
+  - Menor overhead de criação e destruição  
+  - Melhor aproveitamento de CPU  
+  - Compartilhamento direto de recursos :contentReference[oaicite:8]{index=8}
+
+- **Context switching entre threads**  
+  Alternar entre threads é mais leve do que entre processos, porém ainda requer salvar e restaurar o contexto :contentReference[oaicite:9]{index=9}.
 
 ## 3. Diferenças principais
 
-| Aspecto               | Processo                              | Thread                             |
-|-----------------------|---------------------------------------|------------------------------------|
-| Espaço de memória     | Isolado (próprio)                     | Compartilhado dentro do processo   |
-| Criação               | Mais custoso (alocação de recursos)   | Menos custoso (herda recursos)     |
-| IPC / Comunicação     | IPC (pipes, sockets, etc.)            | Acesso direto à memória compartilhada |
-| Falha                | Falha de um não afeta outros processos | Falha pode comprometer todo o processo |
-| Overhead de troca     | Alto (context switch pesado)          | Baixo (context switch leve)        |
+| Aspecto               | Processo                                                  | Thread                                                         |
+|-----------------------|-----------------------------------------------------------|----------------------------------------------------------------|
+| Espaço de memória     | Isolado, próprio                                           | Compartilhado dentro do processo                               |
+| Overhead              | Alto (criação e troca de contexto pesados)                | Baixo (troca rápida, criação mais leve)                        |
+| Comunicação           | Requer IPC (pipes, sockets, memória compartilhada)        | Comunicação direta via memória compartilhada                  |
+| Tolerância a falhas   | Falha isolada; outros processos seguem                    | Falha pode afetar todo o processo                              |
+| Escalonamento         | Via PCB, com prioridades, aging, filas de I/O :contentReference[oaicite:10]{index=10} | Interno ao processo; pode usar agendamento de usuário ou SO     |
+| Paralelismo real      | Limitado (um processo por núcleo)                         | Pode usar múltiplos núcleos físicos ou SMT para paralelismo real |
