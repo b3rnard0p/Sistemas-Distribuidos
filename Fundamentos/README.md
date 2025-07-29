@@ -1,6 +1,6 @@
 # Sistemas Paralelos e Distribuídos
 
-Este repositório reúne conceitos sobre **Sistemas Paralelos**, **Sistemas Distribuídos** e **Threads**, com foco em arquiteturas, características e objetivos principais.
+Este README reúne conceitos sobre **Sistemas Paralelos**, **Sistemas Distribuídos** e **Threads**.
 
 ---
 
