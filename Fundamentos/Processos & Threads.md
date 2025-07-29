@@ -14,7 +14,7 @@
   - Espera / bloqueado (waiting)
 
 - **Escalonamento e troca de contexto**  
-  O sistema operacional realiza multitarefa e preempção, alternando processos conforme prioridades, aging e interrupções de I/O. Cada troca de contexto armazena o estado em PCB (Process Control Block).
+  O sistema operacional realiza multitarefa e preempção, alternando processos conforme prioridades, aging e interrupções de I/O. Cada troca de contexto armazena o estado em PCB (contém todas as informações necessárias para que o SO controle, escale, suspenda e retome um processo corretamente).
 
 - **Tipos de processos**  
   - CPU-bound: consome intensamente a CPU  
