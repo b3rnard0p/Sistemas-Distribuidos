@@ -63,7 +63,7 @@ Relógios lógicos são construídos para **capturar causalidade** entre eventos
 
 ## 3. Exclusão mútua
 
-Exclusão mútua garante que somente uma thread/processo execute uma seção crítica. Vamos ver abordagens locais (locks) e distribuídas (algoritmos baseados em relógios, token/election).
+Exclusão mútua garante que somente uma thread/processo execute uma seção crítica. Abordagens locais (locks) e distribuídas (algoritmos baseados em relógios e eleição).
 
 ### 3.1. Locks (threads no mesmo processo / SMP)
 
