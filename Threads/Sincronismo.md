@@ -91,14 +91,3 @@ Exclusão mútua garante que somente uma thread/processo execute uma seção cr�
 **Como se relaciona com exclusão mútua**:
 
 * Um coordenador eleito pode gerenciar permissões centralmente (recebe pedidos e concede accesso). Esse padrão é simples, mas cria um ponto único de falha e bottleneck.
-
----
-
-## 4. Comparações rápidas
-
-| Abordagem                 |                   Escopo |        Latência |           Mensagens |                     Robustez a falhas | Quando usar                            |
-| ------------------------- | -----------------------: | --------------: | ------------------: | ------------------------------------: | -------------------------------------- |
-| Locks (Mutex OS)          |  Mesma memória (threads) |           Baixa | N/A (memória local) |                              Boa (SO) | Threads no mesmo processo              |
-| Lamport / Ricart-Agrawala |   Processos distribuídos |        Moderada |           O(N) msgs |  Sensível a falhas (precisa timeouts) | Sistemas distribuídos sem token        |
-| Token Ring                |              Distribuído | Depende do anel |       Baixo (token) |             Sensível a perda do token | Sistemas com baixo churn e anel lógico |
-| Coordenador (eleição)     | Distribuído centralizado | Baixa (central) |        Centralizado | Ponto único de falha, precisa eleição | Quando coordenação central é aceitável |
