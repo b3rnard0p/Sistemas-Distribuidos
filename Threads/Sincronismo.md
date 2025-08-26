@@ -12,7 +12,6 @@ Objetivos do sincronismo:
 
 * Garantir **exclusão mútua** (apenas um agente no recurso crítico).
 * Controlar a **ordenação** de eventos (causalidade).
-* Evitar **deadlocks** e **famine (starvation)** quando possível.
 
 ---
 
