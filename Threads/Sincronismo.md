@@ -1,9 +1,5 @@
 # Sincronismo em Threads
 
-Este documento explica conceitos fundamentais de **sincronismo** em sistemas concorrentes e distribuídos, com foco em: **relógios (físicos vs lógicos)** e **exclusão mútua** (locks, algoritmos baseados em relógio e mecanismos por eleição/token).
-
----
-
 ## 1. Por que sincronismo é necessário?
 
 Em programas concorrentes e distribuídos, múltiplas threads ou processos podem acessar recursos compartilhados simultaneamente. Problemas comuns:
@@ -84,73 +80,9 @@ Exclusão mútua garante que somente uma thread/processo execute uma seção cr�
 * **Mutual Exclusion**: somente um entra.
 * **Progress (Ausência de deadlock)**: se ninguém está na sec. crítica, alguém que quer entrar deverá conseguir.
 * **Bounded waiting (Ausência de starvation)**: garantia de que espera não é indefinida.
-
-**Exemplo (Python)**:
-
-```python
-import threading
-
-lock = threading.Lock()
-
-def critical_section():
-    with lock:  # adquire e libera automaticamente
-        # seção crítica
-        do_work()
-```
-
-**Problemas a considerar**:
-
-* **Deadlocks**: múltiplos locks tomados em ordens inconsistentes.
-* **Priority inversion**: thread de baixa prioridade retém recurso necessário para thread de alta prioridade.
-* **Overhead**: locks finos demais aumentam complexidade; locks grosseiros reduzem paralelismo.
-
-**Boas práticas**:
-
-* Manter secções críticas curtas.
-* Evitar segurar locks durante operações bloqueantes (I/O, chamadas de rede).
-* Sempre adquirir locks em ordem fixa para evitar deadlocks.
-* Preferir primitivas de alto nível (condições, barriers) a ad-hoc.
-
 ---
 
-### 3.2. Algoritmos distribuídos baseados em relógio (Lamport / Ricart-Agrawala)
-
-Quando processos estão em máquinas diferentes, não há um lock compartilhado simples. Dois algoritmos clássicos:
-
-#### Lamport's Distributed Mutual Exclusion
-
-* Cada processo mantém um relógio de Lamport e uma fila de requisições ordenadas por `(timestamp, process_id)`.
-* Passos (simplificado):
-
-  1. Para solicitar o recurso, processo envia `REQUEST(ts)` para todos.
-  2. Outros processos respondem `REPLY` imediatamente **a menos** que estejam no seu próprio pedido com timestamp menor; nesse caso adiariam a resposta até liberar.
-  3. O solicitante entra na seção crítica somente após receber `REPLY` de todos os outros e quando sua requisição estiver no topo da sua fila local.
-  4. Ao liberar, envia `RELEASE` a todos para que estes removam sua entrada da fila.
-* **Comunicação**: O(N) mensagens, espera por N-1 replies.
-* **Vantagem**: simplicidade; ordem por timestamp (usando relógios lógicos) assegura progressão correta.
-
-#### Ricart–Agrawala (otimização)
-
-* Variante do Lamport que evita mensagens `RELEASE` separadas.
-* Regras: ao receber `REQUEST`, responde imediatamente **somente** se não estiver interessado ou se o pedido remoto tiver timestamp menor; caso contrário adia a resposta.
-* O solicitante entra na seção crítica após receber N-1 respostas.
-* **Complexidade**: mensagens por entrada = N-1 (mais eficiente que Lamport que usa 2(N-1) em algumas formulações).
-
-**Uso de relógios**: ambos dependem de timestamps lógicos (Lamport), não do tempo físico. Os timestamps resolvem empates e produzem uma ordem total determinística.
-
----
-
-### 3.3. Token-based / eleição (Token Ring, Election)
-
-#### Token Ring (mecanismo de token)
-
-* Um token único circula entre os processos em anel lógico.
-* O processo que possui o token pode entrar na seção crítica.
-* Ao terminar, passa o token adiante.
-* **Vantagens**: muito simples, evita mensagens para cada pedido (token passa periodicamente).
-* **Desvantagens**: latência depende do tempo de passagem do token; falha do detentor do token precisa de recuperação (election).
-
-#### Eleição (Bully, Ring)
+### 3.3. eleição
 
 * Algoritmos de eleição escolhem um coordenador (coordenador pode controlar o token ou tomar decisões centralizadas).
 * **Bully**: processo com maior id assume; derrota os menores; troca de mensagens O(N)–O(N²) dependendo da falha.
