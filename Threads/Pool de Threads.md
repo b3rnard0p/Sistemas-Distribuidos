@@ -1,9 +1,5 @@
 # Pool de Threads
 
-Este documento explica o conceito de **Thread Pool (pool de threads)**, motivações, arquiteturas comuns, políticas de enfileiramento/rejeição, estratégias de dimensionamento, exemplos práticos em Java e Python e boas práticas para produção.
-
----
-
 ## 1. O que é um Pool de Threads?
 
 Um *thread pool* é um componente que mantém um conjunto (pool) de threads reutilizáveis para executar tarefas (jobs, runnables, callables). Em vez de criar e destruir uma thread para cada tarefa, um pool permite reaproveitar threads, reduzindo overheads de criação e destruição e controlando concorrência.
