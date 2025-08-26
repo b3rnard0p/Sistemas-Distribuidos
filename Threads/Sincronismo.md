@@ -82,7 +82,7 @@ Exclusão mútua garante que somente uma thread/processo execute uma seção cr�
 * **Bounded waiting (Ausência de starvation)**: garantia de que espera não é indefinida.
 ---
 
-### 3.3. eleição
+### 3.2. eleição
 
 * Algoritmos de eleição escolhem um coordenador (coordenador pode controlar o token ou tomar decisões centralizadas).
 * **Bully**: processo com maior id assume; derrota os menores; troca de mensagens O(N)–O(N²) dependendo da falha.
