@@ -1,0 +1,216 @@
+package Autenticador;
+
+import java.net.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.swing.JOptionPane;
+
+public class ServidorInterface extends javax.swing.JFrame {
+    
+    private ServerSocket servidor;
+    private ArrayList<String> frutas;
+    private int indiceAtual = 0;
+    private boolean servidorAtivo = false;
+    private Timer timerFrutas;
+
+    public ServidorInterface() {
+        initComponents();
+        inicializarFrutas();
+        txtFrutaAtual.setEditable(false);
+        atualizarFruta();
+    }
+    
+    private void inicializarFrutas() {
+        frutas = new ArrayList<>(Arrays.asList("maçã", "banana", "pera", "abacaxi", "goiaba"));
+    }
+    
+    private void atualizarFruta() {
+        if (!frutas.isEmpty()) {
+            txtFrutaAtual.setText(frutas.get(indiceAtual));
+            System.out.println("Fruta atual: " + frutas.get(indiceAtual));
+        }
+    }
+    
+    private void proximaFruta() {
+        indiceAtual = (indiceAtual + 1) % frutas.size();
+        atualizarFruta();
+    }
+    
+    private void iniciarTimerFrutas() {
+        if (timerFrutas != null) {
+            timerFrutas.cancel();
+        }
+        
+        timerFrutas = new Timer();
+        timerFrutas.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    proximaFruta();
+                });
+            }
+        }, 5000, 5000);
+        
+        System.out.println("Timer de frutas iniciado - mudança a cada 5 segundos");
+    }
+    
+    private void pararTimerFrutas() {
+        if (timerFrutas != null) {
+            timerFrutas.cancel();
+            timerFrutas = null;
+            System.out.println("Timer de frutas parado");
+        }
+    }
+    
+    private void iniciarServidor() {
+        try {
+            servidor = new ServerSocket(1234);
+            servidorAtivo = true;
+            btnIniciar.setText("Parar");
+            btnIniciar.setEnabled(true);
+            
+            iniciarTimerFrutas();
+            
+            System.out.println("Servidor TCP ativo na porta 1234");
+            System.out.println("Servidor iniciado com fruta: " + txtFrutaAtual.getText());
+            
+            new Thread(() -> {
+                while (servidorAtivo) {
+                    try {
+                        Socket cliente = servidor.accept();
+                        System.out.println("Cliente conectado: " + cliente.getInetAddress().getHostAddress());
+                        
+                        // Thread para atender o cliente
+                        new Thread(() -> atenderCliente(cliente)).start();
+                        
+                    } catch (IOException e) {
+                        if (servidorAtivo) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).start();
+            
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao iniciar servidor: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    private void atenderCliente(Socket cliente) {
+        try {
+            String solicitacao = ComunicadorTCP.receberMensagem(cliente);
+            System.out.println("Recebido: " + solicitacao);
+            
+            if ("SOLICITAR_FRUTA".equals(solicitacao)) {
+                String frutaAtual = txtFrutaAtual.getText();
+                ComunicadorTCP.enviarMensagem(cliente, frutaAtual);
+                System.out.println("Enviado para cliente: " + frutaAtual);
+            }
+            
+            cliente.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void pararServidor() {
+        try {
+            servidorAtivo = false;
+            pararTimerFrutas();
+            
+            if (servidor != null && !servidor.isClosed()) {
+                servidor.close();
+            }
+            btnIniciar.setText("Iniciar");
+            System.out.println("Servidor parado");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        txtFrutaAtual = new javax.swing.JTextField();
+        btnIniciar = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jLabel1.setText("Servidor");
+
+        txtFrutaAtual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFrutaAtualActionPerformed(evt);
+            }
+        });
+
+        btnIniciar.setText("Iniciar");
+        btnIniciar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIniciarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(68, 68, 68)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtFrutaAtual)
+                            .addComponent(btnIniciar, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))))
+                .addContainerGap(40, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(33, 33, 33)
+                .addComponent(txtFrutaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43)
+                .addComponent(btnIniciar)
+                .addContainerGap(32, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void txtFrutaAtualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFrutaAtualActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFrutaAtualActionPerformed
+
+    private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
+        if (!servidorAtivo) {
+            iniciarServidor();
+        } else {
+            pararServidor();
+        }
+    }//GEN-LAST:event_btnIniciarActionPerformed
+
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ServidorInterface().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnIniciar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JTextField txtFrutaAtual;
+    // End of variables declaration//GEN-END:variables
+}
